@@ -9,7 +9,7 @@ import ora from 'ora';
 dotenv.config({ quiet: true });
 
 async function getAllRepos(username: string): Promise<GitHubRepository[]> {
-  const repos: GitHubRepository[] = []
+  let repos: GitHubRepository[] = []
   let cursor: string | null = null
   let hasNextPage: boolean = true
 
@@ -25,6 +25,15 @@ async function getAllRepos(username: string): Promise<GitHubRepository[]> {
             nodes {
               name
               url
+              repositoryTopics(first: 100) {
+                edges {
+                  node {
+                    topic {
+                      name
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -39,12 +48,23 @@ async function getAllRepos(username: string): Promise<GitHubRepository[]> {
       },
     })
 
-    repos.push(...response.data.data.user.repositories.nodes)
-    hasNextPage = response.data.data.user.repositories.pageInfo.hasNextPage
-    cursor = response.data.data.user.repositories.pageInfo.endCursor
+      repos.push(...response.data.data.user.repositories.nodes)
+  hasNextPage = response.data.data.user.repositories.pageInfo.hasNextPage
+  cursor = response.data.data.user.repositories.pageInfo.endCursor
+}
+
+const projectRepos = []
+
+for(const repo of repos) {
+  if(repo.repositoryTopics.edges.length > 0) {
+    if(repo.repositoryTopics.edges.map(edge => edge.node.topic.name).some(topic => topic === 'project')) {
+      projectRepos.push(repo)
+    }
   }
-  
-  return repos;
+}
+
+console.log(`\n\nFound ${projectRepos.length} projects with 'project' topic\n\n`);
+return projectRepos;
 }
 
 async function cloneRepos(repos: GitHubRepository[]) {
@@ -61,14 +81,14 @@ async function cloneRepos(repos: GitHubRepository[]) {
   const clonePromises = repos.map(async (repo) => {
     const cloneUrl = repo.url.replace('https://github.com/', `https://${process.env.GITHUB_TOKEN}@github.com/`)
     const cloneCommand = `git clone ${cloneUrl} ${base_dir}${repo.name}`
-    const spin = ora(`Cloning ${repo.name}...`).start()
+    const spinner = ora(`Cloning ${repo.name}...`).start()
     
     try {
       const result = await execAsync(cloneCommand);
-      spin.succeed(`Cloned ${repo.name}!`)
+      spinner.succeed(`Cloned ${repo.name}`)
       return { success: true, repo: repo.name, result };
     } catch (error) {
-      spin.fail(`Failed to clone ${repo.name}!`)
+      spinner.fail(`Failed to clone ${repo.name}`)
       return { success: false, repo: repo.name, error };
     }
   });
@@ -80,11 +100,10 @@ async function cloneRepos(repos: GitHubRepository[]) {
   const successful = results.filter(r => r.success).length;
   const failed = results.filter(r => !r.success).length;
   
-  console.log(`\n📊 Summary: ${successful} repos cloned, ${failed} failed`);
+  console.log(`\n\n📊 Summary: ${successful} repos cloned, ${failed} failed\n\n`);
   
   return results;
 }
 getAllRepos('AayushK47').then(repos => {
   cloneRepos(repos)
-  // console.log(JSON.stringify(repos, null, 2))
 })
