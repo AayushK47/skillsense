@@ -130,11 +130,11 @@ async function getAllRepos(username: string): Promise<GitHubRepository[]> {
       }
     `
 
-    const response = await axios.post<GitHubGraphQLResponse>(process.env.GITHUB_ENDPOINT!, {
+    const response = await axios.post<GitHubGraphQLResponse>(process.env.GH_ENDPOINT!, {
       query,
     }, {
       headers: {
-        Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+        Authorization: `Bearer ${process.env.GH_TOKEN}`,
       },
     })
 
@@ -169,7 +169,7 @@ async function cloneRepos(repos: GitHubRepository[]) {
   
   // Prepare array of clone promises
   const clonePromises = repos.map(async (repo) => {
-    const cloneUrl = repo.url.replace("https://github.com/", `https://${process.env.GITHUB_TOKEN}@github.com/`)
+    const cloneUrl = repo.url.replace("https://github.com/", `https://${process.env.GH_TOKEN}@github.com/`)
     const cloneCommand = `git clone ${cloneUrl} ${base_dir}${repo.name}`
     const spinner = ora(`Cloning ${repo.name}...`).start()
     

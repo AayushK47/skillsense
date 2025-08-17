@@ -11,8 +11,8 @@ The `weekly-analysis.yml` workflow automatically runs repository analysis every 
 Before this workflow can run, you need to set up the following GitHub repository secrets:
 
 #### 1. GitHub Configuration
-- `GITHUB_TOKEN`: A GitHub Personal Access Token with `repo` scope
-- `GITHUB_ENDPOINT`: GitHub GraphQL API endpoint (usually `https://api.github.com/graphql`)
+- `GH_TOKEN`: A GitHub Personal Access Token with `repo` scope
+- `GH_ENDPOINT`: GitHub GraphQL API endpoint (usually `https://api.github.com/graphql`)
 
 #### 2. Firebase Configuration
 - `FIREBASE_PROJECT_ID`: Your Firebase project ID

@@ -116,8 +116,8 @@ const results = resultsDoc.data();
 
 2. Create a `.env` file with your GitHub token and Firebase credentials:
    ```
-   GITHUB_TOKEN=your_github_token_here
-   GITHUB_ENDPOINT=https://api.github.com/graphql
+   GH_TOKEN=your_github_token_here
+   GH_ENDPOINT=https://api.github.com/graphql
    
    # Firebase Service Account Configuration
    FIREBASE_TYPE=service_account
