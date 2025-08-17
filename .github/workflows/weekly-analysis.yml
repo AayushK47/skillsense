@@ -1,0 +1,53 @@
+name: Update stats
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'
+  workflow_dispatch: # Allow manual triggering
+
+jobs:
+  analyze-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build project
+        run: npm run build
+        
+      - name: Run analysis and push to Firebase
+        run: npm run analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ENDPOINT: ${{ secrets.GITHUB_ENDPOINT }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_PRIVATE_KEY: ${{ secrets.FIREBASE_PRIVATE_KEY }}
+          FIREBASE_CLIENT_EMAIL: ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+          
+      - name: Clean up temporary files
+        if: always()
+        run: |
+          rm -rf .temp/
+          rm -rf dist/
+          
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "✅ Weekly analysis completed successfully!"
+          echo "📊 Results have been pushed to Firebase"
+          
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Weekly analysis failed!"
+          echo "Please check the workflow logs for details"
