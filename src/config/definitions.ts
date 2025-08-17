@@ -97,16 +97,6 @@ export const DATABASES: Record<string, DatabaseConfig> = {
     packagePatterns: ['mysql', 'mysql2', 'pymysql', 'mysql-connector-python'],
     category: 'sql'
   },
-  sqlite: {
-    name: 'SQLite',
-    packagePatterns: ['sqlite3', 'better-sqlite3', 'sqlite'],
-    category: 'sql'
-  },
-  sqlserver: {
-    name: 'SQL Server',
-    packagePatterns: ['mssql', 'sqlserver', 'pyodbc'],
-    category: 'sql'
-  },
   mongodb: {
     name: 'MongoDB',
     packagePatterns: ['mongodb', 'mongoose', 'pymongo', 'mongo-go-driver'],
@@ -115,11 +105,6 @@ export const DATABASES: Record<string, DatabaseConfig> = {
   redis: {
     name: 'Redis',
     packagePatterns: ['redis', 'ioredis', 'redis-py', 'go-redis'],
-    category: 'nosql'
-  },
-  elasticsearch: {
-    name: 'Elasticsearch',
-    packagePatterns: ['elasticsearch', '@elastic/elasticsearch', 'elasticsearch-py'],
     category: 'nosql'
   },
   prisma: {
@@ -146,11 +131,6 @@ export const DATABASES: Record<string, DatabaseConfig> = {
     name: 'GORM',
     packagePatterns: ['gorm.io/gorm', 'gorm.io/driver'],
     category: 'orm'
-  },
-  ent: {
-    name: 'Ent',
-    packagePatterns: ['entgo.io/ent'],
-    category: 'orm'
   }
 };
 
@@ -162,41 +142,17 @@ export const TOOLS: Record<string, ToolConfig> = {
     packagePatterns: ['docker', '@types/docker'],
     category: 'devops'
   },
-  kubernetes: {
-    name: 'Kubernetes',
-    filePatterns: ['.yaml', '.yml'],
-    packagePatterns: ['kubernetes', '@kubernetes/client-node'],
-    category: 'devops'
-  },
-  terraform: {
-    name: 'Terraform',
-    filePatterns: ['.tf', '.tfvars', '.hcl'],
-    packagePatterns: ['terraform'],
-    category: 'devops'
-  },
-  ansible: {
-    name: 'Ansible',
-    filePatterns: ['playbook.yml', 'inventory.yml', 'ansible.cfg'],
-    packagePatterns: ['ansible'],
-    category: 'devops'
-  },
   
   // Cloud Services
   aws: {
     name: 'AWS',
-    filePatterns: ['.yml', '.yaml', '.json'],
+    filePatterns: [],
     packagePatterns: ['aws-sdk', '@aws-sdk/client-', 'boto3', 'botocore'],
-    category: 'cloud'
-  },
-  azure: {
-    name: 'Azure',
-    filePatterns: ['.yml', '.yaml', '.json'],
-    packagePatterns: ['@azure/ms-rest-js', '@azure/identity', 'azure-mgmt-', 'azure-storage-'],
     category: 'cloud'
   },
   gcp: {
     name: 'Google Cloud',
-    filePatterns: ['.yml', '.yaml', '.json'],
+    filePatterns: [],
     packagePatterns: ['@google-cloud/', 'google-cloud-', 'google-auth'],
     category: 'cloud'
   },
@@ -214,60 +170,10 @@ export const TOOLS: Record<string, ToolConfig> = {
     packagePatterns: ['@actions/core', '@actions/github'],
     category: 'cicd'
   },
-  gitlabCI: {
-    name: 'GitLab CI',
-    filePatterns: ['.gitlab-ci.yml'],
-    packagePatterns: [],
-    category: 'cicd'
-  },
-  jenkins: {
-    name: 'Jenkins',
-    filePatterns: ['Jenkinsfile', 'Jenkinsfile.declarative'],
-    packagePatterns: ['jenkins'],
-    category: 'cicd'
-  },
-  circleci: {
-    name: 'CircleCI',
-    filePatterns: ['.circleci/config.yml'],
-    packagePatterns: [],
-    category: 'cicd'
-  },
   travisCI: {
     name: 'Travis CI',
     filePatterns: ['.travis.yml'],
     packagePatterns: [],
     category: 'cicd'
   },
-  
-  // Monitoring & Testing
-  prometheus: {
-    name: 'Prometheus',
-    filePatterns: ['prometheus.yml', 'prometheus.yaml'],
-    packagePatterns: ['prometheus', 'prom-client'],
-    category: 'monitoring'
-  },
-  grafana: {
-    name: 'Grafana',
-    filePatterns: ['grafana.ini', 'provisioning/'],
-    packagePatterns: ['grafana'],
-    category: 'monitoring'
-  },
-  jest: {
-    name: 'Jest',
-    filePatterns: ['jest.config.js', 'jest.config.ts'],
-    packagePatterns: ['jest', '@types/jest'],
-    category: 'testing'
-  },
-  pytest: {
-    name: 'pytest',
-    filePatterns: ['pytest.ini', 'conftest.py'],
-    packagePatterns: ['pytest'],
-    category: 'testing'
-  },
-  cypress: {
-    name: 'Cypress',
-    filePatterns: ['cypress.config.js', 'cypress/'],
-    packagePatterns: ['cypress'],
-    category: 'testing'
-  }
 };
