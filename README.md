@@ -23,11 +23,23 @@ A modern TypeScript project for analyzing GitHub repositories to understand prog
 
 ## Supported Frameworks
 
-- **React/Next.js** - Combined framework detected via JSX/TSX files and package.json dependencies
-- **Express** - Detected via JS/TS files and package.json dependencies
-- **Flask** - Detected via Python files and package.json dependencies
-- **Go Fiber** - Detected via Go files and go.mod dependencies
-- **Flutter** - Detected via Dart files and import patterns
+### Frontend
+- **React/Next.js** - Detected via JSX/TSX files and package.json dependencies
+- **Flutter** - Detected via Dart files and pubspec.yaml dependencies
+
+### Backend
+- **Express** (Node.js) - Detected via JS/TS files and package.json dependencies
+- **Flask** (Python) - Detected via Python files and requirements.txt/pyproject.toml dependencies
+- **Django** (Python) - Detected via Python files and requirements.txt/pyproject.toml dependencies
+- **FastAPI** (Python) - Detected via Python files and requirements.txt/pyproject.toml dependencies
+- **Go Fiber** (Go) - Detected via Go files and go.mod dependencies
+- **Gin** (Go) - Detected via Go files and go.mod dependencies
+- **Echo** (Go) - Detected via Go files and go.mod dependencies
+
+### Monorepo Support
+SkillSense automatically detects monorepos and searches for dependency files in common subdirectories:
+- `frontend/`, `backend/`, `client/`, `server/`, `api/`, `web/`, `app/`, `apps/`, `packages/`
+- Example: For a repo with `backend/go.mod` and `frontend/package.json`, both frameworks will be detected
 
 ## Supported Databases & ORMs
 
@@ -89,10 +101,25 @@ The system automatically detects various tools and services by analyzing depende
 
 ## Firebase Integration
 
-The system automatically pushes analysis results to Firebase Firestore, making them available for real-time access by frontend applications. Results are stored in one location:
+The system saves results differently based on the `SAVE_TO_FIREBASE` environment variable:
+
+### **Local Development (Default)**
+When running locally without `SAVE_TO_FIREBASE`, results are saved to `analysis-results.json` in the project root:
+```bash
+npm run analyze
+# ✅ Saves to: analysis-results.json
+```
+
+### **CI/CD (GitHub Actions)**
+In GitHub Actions, `SAVE_TO_FIREBASE=true` is set automatically, pushing results to Firebase Firestore for real-time access:
 
 - **Results**: Analysis results are stored and updated at the `results` document (overwrites previous data)
 
+**To push to Firebase locally** (for testing):
+```bash
+SAVE_TO_FIREBASE=true npm run analyze
+# ✅ Pushes to: Firebase Firestore
+```
 
 ### Frontend Access
 
@@ -157,7 +184,8 @@ This will:
 - Scan all cloned repositories
 - Count lines of code for each language
 - Detect frameworks with confidence levels
-- Export comprehensive results to `analysis-results.json`
+- **Locally**: Save results to `analysis-results.json` in the project root
+- **CI/CD**: Push results to Firebase Firestore
 - Provide structured data for further analysis
 
 ### 3. Process Results (Optional)

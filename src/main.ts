@@ -66,12 +66,20 @@ async function main() {
       await analyzer.analyzeAllRepositories();
       const results = analyzer.exportResults();
       
-      // Step 4: Push results to Firebase
-      spinner.text = "Pushing results to Firebase...";
-      const firebaseService = new FirebaseService();
-      await firebaseService.pushAnalysisResults(results);
+      // Step 4: Save results (Firebase if SAVE_TO_FIREBASE=true, otherwise JSON)
+      const saveToFirebase = process.env.SAVE_TO_FIREBASE === 'true';
       
-      spinner.succeed("Analysis completed and results pushed to Firebase");
+      if (saveToFirebase) {
+        spinner.text = "Pushing results to Firebase...";
+        const firebaseService = new FirebaseService();
+        await firebaseService.pushAnalysisResults(results);
+        spinner.succeed("Analysis completed and results pushed to Firebase");
+      } else {
+        spinner.text = "Saving results to JSON file...";
+        const outputPath = path.join(process.cwd(), 'analysis-results.json');
+        fs.writeFileSync(outputPath, JSON.stringify(results, null, 2));
+        spinner.succeed(`Analysis completed and saved to ${outputPath}`);
+      }
       
       // Step 5: Pass results to next step (you can modify this function)
       await processResults(results);

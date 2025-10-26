@@ -66,7 +66,21 @@ export const FRAMEWORKS: Record<string, FrameworkConfig> = {
   flask: {
     name: 'Flask',
     filePatterns: ['.py'],
-    packagePatterns: ['flask'],
+    packagePatterns: ['flask', 'Flask'],
+    excludePatterns: ['__pycache__', '.git', 'venv', 'env'],
+    category: 'backend'
+  },
+  django: {
+    name: 'Django',
+    filePatterns: ['.py'],
+    packagePatterns: ['django', 'Django'],
+    excludePatterns: ['__pycache__', '.git', 'venv', 'env'],
+    category: 'backend'
+  },
+  fastapi: {
+    name: 'FastAPI',
+    filePatterns: ['.py'],
+    packagePatterns: ['fastapi', 'FastAPI'],
     excludePatterns: ['__pycache__', '.git', 'venv', 'env'],
     category: 'backend'
   },
@@ -74,6 +88,20 @@ export const FRAMEWORKS: Record<string, FrameworkConfig> = {
     name: 'Go Fiber',
     filePatterns: ['.go'],
     packagePatterns: ['github.com/gofiber/fiber'],
+    excludePatterns: ['vendor', '.git', 'bin', 'pkg'],
+    category: 'backend'
+  },
+  gin: {
+    name: 'Gin',
+    filePatterns: ['.go'],
+    packagePatterns: ['github.com/gin-gonic/gin'],
+    excludePatterns: ['vendor', '.git', 'bin', 'pkg'],
+    category: 'backend'
+  },
+  echo: {
+    name: 'Echo',
+    filePatterns: ['.go'],
+    packagePatterns: ['github.com/labstack/echo'],
     excludePatterns: ['vendor', '.git', 'bin', 'pkg'],
     category: 'backend'
   },
@@ -142,17 +170,41 @@ export const TOOLS: Record<string, ToolConfig> = {
     packagePatterns: ['docker', '@types/docker'],
     category: 'devops'
   },
+  kubernetes: {
+    name: 'Kubernetes',
+    filePatterns: ['k8s/', 'kubernetes/', 'deployment.yaml', 'deployment.yml', 'service.yaml', 'service.yml'],
+    packagePatterns: ['kubernetes', '@kubernetes/client-node', 'kubectl'],
+    category: 'devops'
+  },
+  terraform: {
+    name: 'Terraform',
+    filePatterns: ['.tf', '.tfvars'],
+    packagePatterns: ['terraform'],
+    category: 'devops'
+  },
+  ansible: {
+    name: 'Ansible',
+    filePatterns: ['playbook.yml', 'inventory.yml', 'ansible.cfg'],
+    packagePatterns: ['ansible'],
+    category: 'devops'
+  },
   
   // Cloud Services
   aws: {
     name: 'AWS',
-    filePatterns: [],
+    filePatterns: ['cloudformation/', 'aws-lambda/', 'serverless.yml'],
     packagePatterns: ['aws-sdk', '@aws-sdk/client-', 'boto3', 'botocore'],
+    category: 'cloud'
+  },
+  azure: {
+    name: 'Azure',
+    filePatterns: ['azure-pipelines.yml', 'azuredeploy.json'],
+    packagePatterns: ['@azure/ms-rest-js', '@azure/identity', 'azure-mgmt-', 'azure-storage-'],
     category: 'cloud'
   },
   gcp: {
     name: 'Google Cloud',
-    filePatterns: [],
+    filePatterns: ['cloudbuild.yaml', 'app.yaml'],
     packagePatterns: ['@google-cloud/', 'google-cloud-', 'google-auth'],
     category: 'cloud'
   },
@@ -170,10 +222,60 @@ export const TOOLS: Record<string, ToolConfig> = {
     packagePatterns: ['@actions/core', '@actions/github'],
     category: 'cicd'
   },
+  gitlabCI: {
+    name: 'GitLab CI',
+    filePatterns: ['.gitlab-ci.yml'],
+    packagePatterns: [],
+    category: 'cicd'
+  },
+  jenkins: {
+    name: 'Jenkins',
+    filePatterns: ['Jenkinsfile'],
+    packagePatterns: ['jenkins'],
+    category: 'cicd'
+  },
+  circleci: {
+    name: 'CircleCI',
+    filePatterns: ['.circleci/config.yml'],
+    packagePatterns: [],
+    category: 'cicd'
+  },
   travisCI: {
     name: 'Travis CI',
     filePatterns: ['.travis.yml'],
     packagePatterns: [],
     category: 'cicd'
   },
+  
+  // Monitoring & Testing
+  prometheus: {
+    name: 'Prometheus',
+    filePatterns: ['prometheus.yml', 'prometheus.yaml'],
+    packagePatterns: ['prometheus', 'prom-client'],
+    category: 'monitoring'
+  },
+  grafana: {
+    name: 'Grafana',
+    filePatterns: ['grafana.ini', 'provisioning/'],
+    packagePatterns: ['grafana'],
+    category: 'monitoring'
+  },
+  jest: {
+    name: 'Jest',
+    filePatterns: ['jest.config.js', 'jest.config.ts'],
+    packagePatterns: ['jest', '@types/jest'],
+    category: 'testing'
+  },
+  pytest: {
+    name: 'pytest',
+    filePatterns: ['pytest.ini', 'conftest.py'],
+    packagePatterns: ['pytest'],
+    category: 'testing'
+  },
+  cypress: {
+    name: 'Cypress',
+    filePatterns: ['cypress.config.js', 'cypress/'],
+    packagePatterns: ['cypress'],
+    category: 'testing'
+  }
 };

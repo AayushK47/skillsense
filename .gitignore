@@ -91,3 +91,8 @@ jspm_packages/
 tmp/
 .temp/
 
+# Analysis results
+analysis-results.json
+demo-analysis-results.json
+test-analysis-results.json
+

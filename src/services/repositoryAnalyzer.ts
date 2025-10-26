@@ -126,7 +126,7 @@ export class RepositoryAnalyzer implements RepositoryAnalyzerService {
             repositoryCount: stats.repos,
             percentageOfTotal: ((stats.lines / summary.totalLines) * 100).toFixed(2)
           }))
-          // .filter(lang => parseFloat(lang.percentageOfTotal) >= 4.0)
+          .filter(lang => parseFloat(lang.percentageOfTotal) >= 4.0)
           .sort((a, b) => b.linesOfCode - a.linesOfCode)
       },
       frameworks: {
@@ -205,7 +205,7 @@ export class RepositoryAnalyzer implements RepositoryAnalyzerService {
           percentageOfRepositories: percentage
         };
       })
-      // .filter(framework => parseFloat(framework.percentageOfRepositories) >= 4.0)
+      .filter(framework => parseFloat(framework.percentageOfRepositories) >= 4.0)
       .sort((a, b) => b.repositoryCount - a.repositoryCount);
   }
 

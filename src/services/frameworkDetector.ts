@@ -26,15 +26,34 @@ export class FrameworkDetector extends BaseDetector<FrameworkConfig, FrameworkDe
     let totalLines = 0;
     let fileCount = 0;
 
-    // Check package.json for Node.js dependencies
+    // Check dependency files based on framework type
     if (frameworkKey === 'reactNext' || frameworkKey === 'express') {
+      // Check package.json for Node.js dependencies
       if (this.checkPackageJson(repoPath, config.packagePatterns)) {
+        detected = true;
+        confidence = 'high';
+      }
+    } else if (frameworkKey === 'flask' || frameworkKey === 'django' || frameworkKey === 'fastapi') {
+      // Check requirements.txt or pyproject.toml for Python dependencies
+      if (this.checkPythonDependencies(repoPath, config.packagePatterns)) {
+        detected = true;
+        confidence = 'high';
+      }
+    } else if (frameworkKey === 'gofiber' || frameworkKey === 'gin' || frameworkKey === 'echo') {
+      // Check go.mod for Go dependencies
+      if (this.checkGoMod(repoPath, config.packagePatterns)) {
+        detected = true;
+        confidence = 'high';
+      }
+    } else if (frameworkKey === 'flutter') {
+      // Check pubspec.yaml for Flutter dependencies
+      if (this.checkPubspec(repoPath, config.packagePatterns)) {
         detected = true;
         confidence = 'high';
       }
     }
 
-    // Check for framework-specific files
+    // Check for framework-specific files if not detected via dependencies
     if (!detected) {
       for (const filePattern of config.filePatterns) {
         if (this.checkFileExists(repoPath, filePattern)) {
@@ -165,5 +184,38 @@ export class FrameworkDetector extends BaseDetector<FrameworkConfig, FrameworkDe
     }
   }
 
+  private checkPythonDependencies(repoPath: string, patterns: string[]): boolean {
+    // Check requirements.txt using parent class method
+    if (this.checkRequirementsTxt(repoPath, patterns)) {
+      return true;
+    }
+
+    // Check pyproject.toml using parent class method
+    if (this.checkPyProjectToml(repoPath, patterns)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  private checkPubspec(repoPath: string, patterns: string[]): boolean {
+    const pubspecPath = path.join(repoPath, 'pubspec.yaml');
+    if (!fs.existsSync(pubspecPath)) {
+      return false;
+    }
+
+    try {
+      const content = fs.readFileSync(pubspecPath, 'utf-8');
+      for (const pattern of patterns) {
+        if (content.toLowerCase().includes(pattern.toLowerCase())) {
+          return true;
+        }
+      }
+    } catch {
+      // File read error
+    }
+
+    return false;
+  }
 
 }

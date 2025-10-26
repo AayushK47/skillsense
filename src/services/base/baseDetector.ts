@@ -18,74 +18,177 @@ export abstract class BaseDetector<TConfig, TResult extends DetectionResult> imp
   protected abstract getDefaultResult(): TResult;
 
   protected checkPackageJson(repoPath: string, packagePatterns: string[]): boolean {
-    const packageJsonPath = path.join(repoPath, 'package.json');
-    if (!fs.existsSync(packageJsonPath)) {
-      return false;
+    // Check root level first
+    const rootPackageJsonPath = path.join(repoPath, 'package.json');
+    if (fs.existsSync(rootPackageJsonPath)) {
+      try {
+        const packageJson = JSON.parse(fs.readFileSync(rootPackageJsonPath, 'utf-8'));
+        const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
+        
+        if (packagePatterns.some(pattern => 
+          Object.keys(dependencies).some(dep => dep.includes(pattern))
+        )) {
+          return true;
+        }
+      } catch {
+        // Continue to check subdirectories
+      }
     }
 
-    try {
-      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-      const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
-      
-      return packagePatterns.some(pattern => 
-        Object.keys(dependencies).some(dep => dep.includes(pattern))
-      );
-    } catch {
-      return false;
+    // Check common monorepo subdirectories
+    const commonSubdirs = ['frontend', 'backend', 'client', 'server', 'api', 'web', 'app', 'apps', 'packages'];
+    for (const subdir of commonSubdirs) {
+      const subdirPath = path.join(repoPath, subdir);
+      if (fs.existsSync(subdirPath) && fs.statSync(subdirPath).isDirectory()) {
+        const packageJsonPath = path.join(subdirPath, 'package.json');
+        if (fs.existsSync(packageJsonPath)) {
+          try {
+            const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+            const dependencies = { ...packageJson.dependencies, ...packageJson.devDependencies };
+            
+            if (packagePatterns.some(pattern => 
+              Object.keys(dependencies).some(dep => dep.includes(pattern))
+            )) {
+              return true;
+            }
+          } catch {
+            // Continue checking other subdirectories
+          }
+        }
+      }
     }
+
+    return false;
   }
 
   protected checkRequirementsTxt(repoPath: string, packagePatterns: string[]): boolean {
-    const requirementsPath = path.join(repoPath, 'requirements.txt');
-    if (!fs.existsSync(requirementsPath)) {
-      return false;
+    // Check root level first
+    const rootRequirementsPath = path.join(repoPath, 'requirements.txt');
+    if (fs.existsSync(rootRequirementsPath)) {
+      try {
+        const requirements = fs.readFileSync(rootRequirementsPath, 'utf-8');
+        const lines = requirements.split('\n').map((line: string) => line.trim().toLowerCase());
+        
+        if (packagePatterns.some(pattern => 
+          lines.some((line: string) => line.includes(pattern.toLowerCase()))
+        )) {
+          return true;
+        }
+      } catch {
+        // Continue to check subdirectories
+      }
     }
 
-    try {
-      const requirements = fs.readFileSync(requirementsPath, 'utf-8');
-      const lines = requirements.split('\n').map((line: string) => line.trim().toLowerCase());
-      
-      return packagePatterns.some(pattern => 
-        lines.some((line: string) => line.includes(pattern.toLowerCase()))
-      );
-    } catch {
-      return false;
+    // Check common monorepo subdirectories
+    const commonSubdirs = ['frontend', 'backend', 'client', 'server', 'api', 'web', 'app', 'apps', 'packages'];
+    for (const subdir of commonSubdirs) {
+      const subdirPath = path.join(repoPath, subdir);
+      if (fs.existsSync(subdirPath) && fs.statSync(subdirPath).isDirectory()) {
+        const requirementsPath = path.join(subdirPath, 'requirements.txt');
+        if (fs.existsSync(requirementsPath)) {
+          try {
+            const requirements = fs.readFileSync(requirementsPath, 'utf-8');
+            const lines = requirements.split('\n').map((line: string) => line.trim().toLowerCase());
+            
+            if (packagePatterns.some(pattern => 
+              lines.some((line: string) => line.includes(pattern.toLowerCase()))
+            )) {
+              return true;
+            }
+          } catch {
+            // Continue checking other subdirectories
+          }
+        }
+      }
     }
+
+    return false;
   }
 
   protected checkGoMod(repoPath: string, packagePatterns: string[]): boolean {
-    const goModPath = path.join(repoPath, 'go.mod');
-    if (!fs.existsSync(goModPath)) {
-      return false;
+    // Check root level first
+    const rootGoModPath = path.join(repoPath, 'go.mod');
+    if (fs.existsSync(rootGoModPath)) {
+      try {
+        const goMod = fs.readFileSync(rootGoModPath, 'utf-8');
+        const lines = goMod.split('\n').map((line: string) => line.trim());
+        
+        if (packagePatterns.some(pattern => 
+          lines.some((line: string) => line.includes(pattern))
+        )) {
+          return true;
+        }
+      } catch {
+        // Continue to check subdirectories
+      }
     }
 
-    try {
-      const goMod = fs.readFileSync(goModPath, 'utf-8');
-      const lines = goMod.split('\n').map((line: string) => line.trim());
-      
-      return packagePatterns.some(pattern => 
-        lines.some((line: string) => line.includes(pattern))
-      );
-    } catch {
-      return false;
+    // Check common monorepo subdirectories
+    const commonSubdirs = ['frontend', 'backend', 'client', 'server', 'api', 'web', 'app', 'apps', 'packages'];
+    for (const subdir of commonSubdirs) {
+      const subdirPath = path.join(repoPath, subdir);
+      if (fs.existsSync(subdirPath) && fs.statSync(subdirPath).isDirectory()) {
+        const goModPath = path.join(subdirPath, 'go.mod');
+        if (fs.existsSync(goModPath)) {
+          try {
+            const goMod = fs.readFileSync(goModPath, 'utf-8');
+            const lines = goMod.split('\n').map((line: string) => line.trim());
+            
+            if (packagePatterns.some(pattern => 
+              lines.some((line: string) => line.includes(pattern))
+            )) {
+              return true;
+            }
+          } catch {
+            // Continue checking other subdirectories
+          }
+        }
+      }
     }
+
+    return false;
   }
 
   protected checkPyProjectToml(repoPath: string, packagePatterns: string[]): boolean {
-    const pyprojectPath = path.join(repoPath, 'pyproject.toml');
-    if (!fs.existsSync(pyprojectPath)) {
-      return false;
+    // Check root level first
+    const rootPyprojectPath = path.join(repoPath, 'pyproject.toml');
+    if (fs.existsSync(rootPyprojectPath)) {
+      try {
+        const pyproject = fs.readFileSync(rootPyprojectPath, 'utf-8');
+        
+        if (packagePatterns.some(pattern => 
+          pyproject.includes(pattern)
+        )) {
+          return true;
+        }
+      } catch {
+        // Continue to check subdirectories
+      }
     }
 
-    try {
-      const pyproject = fs.readFileSync(pyprojectPath, 'utf-8');
-      
-      return packagePatterns.some(pattern => 
-        pyproject.includes(pattern)
-      );
-    } catch {
-      return false;
+    // Check common monorepo subdirectories
+    const commonSubdirs = ['frontend', 'backend', 'client', 'server', 'api', 'web', 'app', 'apps', 'packages'];
+    for (const subdir of commonSubdirs) {
+      const subdirPath = path.join(repoPath, subdir);
+      if (fs.existsSync(subdirPath) && fs.statSync(subdirPath).isDirectory()) {
+        const pyprojectPath = path.join(subdirPath, 'pyproject.toml');
+        if (fs.existsSync(pyprojectPath)) {
+          try {
+            const pyproject = fs.readFileSync(pyprojectPath, 'utf-8');
+            
+            if (packagePatterns.some(pattern => 
+              pyproject.includes(pattern)
+            )) {
+              return true;
+            }
+          } catch {
+            // Continue checking other subdirectories
+          }
+        }
+      }
     }
+
+    return false;
   }
 
   protected checkFileExists(repoPath: string, filePattern: string): boolean {
