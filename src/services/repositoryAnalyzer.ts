@@ -145,6 +145,7 @@ export class RepositoryAnalyzer implements RepositoryAnalyzerService {
           key: toolKey,
           category: stats.category,
           repositoryCount: stats.repos,
+          totalRepositories: summary.totalRepos,
           percentageOfRepositories: ((stats.repos / summary.totalRepos) * 100).toFixed(2)
         }))
         .sort((a, b) => b.repositoryCount - a.repositoryCount),
@@ -200,6 +201,7 @@ export class RepositoryAnalyzer implements RepositoryAnalyzerService {
           name: FRAMEWORKS[frameworkKey]?.name || frameworkKey,
           key: frameworkKey,
           repositoryCount: stats.repos,
+          totalRepositories: summary.totalRepos,
           linesOfCode: stats.lines,
           fileCount: stats.files,
           percentageOfRepositories: percentage
@@ -216,6 +218,7 @@ export class RepositoryAnalyzer implements RepositoryAnalyzerService {
         name: DATABASES[dbKey].name,
         key: dbKey,
         repositoryCount: stats.repos,
+        totalRepositories: summary.totalRepos,
         percentageOfRepositories: ((stats.repos / summary.totalRepos) * 100).toFixed(2)
       }))
       .sort((a, b) => b.repositoryCount - a.repositoryCount);
